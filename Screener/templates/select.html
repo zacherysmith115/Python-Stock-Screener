@@ -1,0 +1,25 @@
+{% extends "index.html" %}
+{% block content %}
+    <div class="content">
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                <div class="form-group">
+                    {{form.sector_select.label(class="form-control-label")}}
+                    {{form.sector_select(class="form-control")}}
+                </div>
+                <div class="form-group">
+                    {{form.industry_select.label(class="form-control-label")}}
+                    {{form.industry_select(class="form-control")}}
+                </div>
+                <div class="form-group">
+                    {{form.delta_select.label(class="form-control-label")}}
+                    {{form.delta_select(class="form-control")}}
+                </div>
+            </fieldset>
+            <div class="form-group">
+                {{form.submit(class="btn btn-primary")}}
+            </div>
+        </form>
+    </div>
+{% endblock content %}
