@@ -9,3 +9,4 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = 'false'
 db = SQLAlchemy(app)
 
+from Screener import routes

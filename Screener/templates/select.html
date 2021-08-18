@@ -3,23 +3,79 @@
     <div class="content">
         <form method="POST" action="">
             {{ form.hidden_tag() }}
+
             <fieldset class="form-group">
+                
                 <div class="form-group">
                     {{form.sector_select.label(class="form-control-label")}}
-                    {{form.sector_select(class="form-control")}}
+                    {% if form.sector_select.errors %}
+                        {{form.sector_select(class="form-control is-invalid")}}
+                        <div class="invalid-feedback">
+                            {% for error in form.sector_select.errors %}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{form.sector_select(class="form-control")}}
+                    {% endif %}
                 </div>
+
                 <div class="form-group">
                     {{form.industry_select.label(class="form-control-label")}}
-                    {{form.industry_select(class="form-control")}}
+                    {% if form.industry_select.errors %}
+                        {{form.industry_select(class="form-control is-invalid")}}
+                        <div class="invalid-feedback">
+                            {% for error in form.industry_select.errors %}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{form.industry_select(class="form-control")}}
+                    {% endif %}
                 </div>
+
                 <div class="form-group">
                     {{form.delta_select.label(class="form-control-label")}}
-                    {{form.delta_select(class="form-control")}}
+                    {% if form.delta_select.errors %}
+                        {{form.delta_select(class="form-control is-invalid")}}
+                        <div class="invalid-feedback">
+                            {% for error in form.delta_select.errors %}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{form.delta_select(class="form-control")}}
+                    {% endif %}
                 </div>
             </fieldset>
+
             <div class="form-group">
                 {{form.submit(class="btn btn-primary")}}
             </div>
         </form>
     </div>
+
+<script>
+function sectorSelection(){
+    var e = document.getElementById('sector_select');
+    var sector = e.options[e.selectedIndex].text
+
+    fetch('/' + sector, {method: 'GET'})
+    .then(response => response.json())
+    .then(json => {
+        var e = document.getElementById('industry_select');
+        e.innerHTML = '';
+
+        for(var i in json){
+            let option = document.createElement('option');
+            option.innerHTML = json[i];
+            e.appendChild(option);
+        }
+        
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    })
+}
+</script>
 {% endblock content %}
