@@ -1,1 +1,2 @@
-./Screener/__pycache__/
+./Screener/__pycache__/*.pyc
+./Screener/database.db

@@ -43,6 +43,14 @@ class Security(db.Model):
     industry_id = db.Column(db.Integer, db.ForeignKey('industry.id'), nullable = False)
     industry = db.relationship('Industry', back_populates = 'securities')
 
+    one_day_delta = db.Column(db.Float, nullable = True)
+    one_week_delta = db.Column(db.Float, nullable = True)
+    one_month_delta = db.Column(db.Float, nullable = True)
+    three_month_delta = db.Column(db.Float, nullable = True)
+    one_year_delta = db.Column(db.Float, nullable = True)
+    three_year_delta = db.Column(db.Float, nullable = True)
+    five_year_delta = db.Column(db.Float, nullable = True)
+
     def __repr__(self) -> str:
         return f'{self.symbol}: {self.security}'
 
