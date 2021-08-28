@@ -1,7 +1,8 @@
 from flask import render_template, jsonify, request
 import pandas as pd
+import matplotlib.pyplot as plt
 
-from Screener import app 
+from Screener import app, db
 from Screener.form import SelectForm
 from Screener.models import Industry, Sector
 
@@ -11,38 +12,33 @@ def home():
     form = SelectForm()
     sector = Sector.query.filter_by(sector = 'Industrials').first()
     form.industry_select.choices = sector.industries
-    
 
-    if request.method == 'POST' and form.validate_on_submit():
-        securities = form.industry_select.data.securities
 
+    # Form submitted
+    if request.method == 'POST':
+
+        # Get securities in the selected industry
+        industry = Industry.query.filter_by(industry = form.industry_select.data).first()
+        securities = industry.securities
+
+        # Build a dataframe with all the delta values for the securities 
         data = {}
         for security in securities:
             data[security.symbol] = [security.one_day_delta, security.one_week_delta, security.one_month_delta,
                     security.three_month_delta, security.one_year_delta, security.three_year_delta,
                     security.five_year_delta]
 
-        df = pd.DataFrame.from_dict(data, orient='index')
-
-        print(df)
+        columns = ['1D', '1W', '1M', '3M', '1Y', '3Y', '5Y']
+        df = pd.DataFrame.from_dict(data, orient='index', columns=columns)
         
-        if form.delta_select.data == '1D':
-            df = df.sort_values(by=[0])
-        elif form.delta_select.data == '1W':
-            df = df.sort_values(by=[1])
-        elif form.delta_select.data == '1M':
-            df = df.sort_values(by=[2])
-        elif form.delta_select.data == '3M':
-            df = df.sort_values(by=[3])
-        elif form.delta_select.data == '1Y':
-            df = df.sort_values(by=[4])
-        elif form.delta_select.data == '3Y':
-            df = df.sort_values(by=[5])
-        elif form.delta_select == '5Y':
-            df = df.sort_values(by=[6])
-
-        print(df)
-
+        # Sort based on selected delta
+        df.sort_values(by=[form.delta_select.data], inplace=True, ascending=False)
+      
+        # Get the best performers
+        df = df.head()
+        series = df[form.delta_select.data]
+      
+        return render_template('result.html', industry = industry, delta = form.delta_select.data, series = series)
 
     return render_template('select.html', form = form)
 
@@ -52,6 +48,10 @@ def home():
 def getSectorData(sector: 'str'):
 
     sector_model = Sector.query.filter_by(sector = sector).first()
+
+    # Handle initial GET request for the page
+    if not sector_model:
+        return jsonify(None)
 
     industries = {}
     i = 0

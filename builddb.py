@@ -98,6 +98,7 @@ def buildDB():
         printProgressBar(i + 1, len(securities), prefix='Fetching historic data: ')
         i = i + 1
 
+    db.session.commit()
     end_time = time.time()
     delta = end_time - start_time
     print(f'Elapsed time: {delta:10.4} s')
@@ -125,7 +126,7 @@ def updateDB():
     print(f'Elapsed time: {delta:10.4} s')
 
 
-
+# Function to append new up to date data, and trim data over 5Y
 def updateTable(security: 'Security') -> None:
 
     df = pd.read_sql_table(security.symbol, db.engine)
@@ -216,7 +217,7 @@ def updateDeltas(security: 'Security', df: 'pd.DataFrame') -> None:
         start_price = df.iloc[THREE_YEAR_INDEX]['Close']
         security.three_year_delta = (end_price - start_price)/start_price * 100
     else:
-        start_price = df.iloc[0]['Close']
+        start_price = df.iloc[FIVE_YEAR_INDEX]['Close']
         security.three_year_delta = (end_price - start_price)/start_price * 100
 
     # Five Year

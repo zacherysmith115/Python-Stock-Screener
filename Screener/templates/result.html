@@ -1,0 +1,29 @@
+{% extends "index.html" %}
+{% block content %}
+    <div class = "content">
+
+        <h3>{{industry}} - {{delta}}</h3>
+        <br>
+        <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Security</th>
+                <th scope="col">Performance</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for index, value in series.items() %}
+            <tr>
+                <th scope="row">{{index}}</th>
+                <td>{{"%.2f"| format(value) + "%"}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <small class="text-muted">
+        <a href="{{url_for('home')}}">Search again?</a>
+    </small>
+    </div>
+
+{% endblock content %}
